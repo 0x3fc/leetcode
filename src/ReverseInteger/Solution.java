@@ -1,8 +1,5 @@
-/*
- * @lc app=leetcode id=7 lang=java
- *
- * [7] Reverse Integer
- */
+package ReverseInteger;
+
 class Solution {
     public int reverse(int x) {
         boolean isNeg = x < 0;

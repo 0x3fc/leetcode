@@ -1,3 +1,5 @@
+package RemoveDuplicatesFromSortedArray;
+
 class Solution {
     public int removeDuplicates(int[] nums) {
         int length = nums.length;

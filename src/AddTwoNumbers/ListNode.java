@@ -1,4 +1,6 @@
-public class ListNode {
+package AddTwoNumbers;
+
+class ListNode {
     int val;
     ListNode next;
 
