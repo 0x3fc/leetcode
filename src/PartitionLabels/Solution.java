@@ -1,6 +1,6 @@
 package PartitionLabels;
 
-import java.util.List;
+import java.util.*;
 
 class Solution {
     public List<Integer> partitionLabels(String S) {

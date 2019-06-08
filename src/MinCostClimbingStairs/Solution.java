@@ -1,7 +1,5 @@
 package MinCostClimbingStairs;
 
-import java.util.Arrays;
-
 class Solution {
     public int minCostClimbingStairs(int[] cost) {
         int f1 = 0;

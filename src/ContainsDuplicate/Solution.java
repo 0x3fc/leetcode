@@ -1,5 +1,7 @@
 package ContainsDuplicate;
 
+import java.util.*;
+
 class Solution {
     public boolean containsDuplicate(int[] nums) {
         Set<Integer> s = new HashSet<>();
