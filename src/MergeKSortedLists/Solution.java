@@ -1,6 +1,7 @@
 package MergeKSortedLists;
 
 import java.util.*;
+import Common.ListNode;
 
 class Solution {
     public ListNode mergeKLists(ListNode[] lists) {

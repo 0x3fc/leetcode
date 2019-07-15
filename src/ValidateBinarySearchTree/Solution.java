@@ -1,5 +1,7 @@
 package ValidateBinarySearchTree;
 
+import Common.TreeNode;
+
 class Solution {
     public boolean isValidBST(TreeNode root) {
         return helper(root, null, null);

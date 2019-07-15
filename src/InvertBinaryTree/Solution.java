@@ -1,5 +1,7 @@
 package InvertBinaryTree;
 
+import Common.TreeNode;
+
 class Solution {
     public TreeNode invertTree(TreeNode root) {
         if (root == null) {

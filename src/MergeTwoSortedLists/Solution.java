@@ -1,5 +1,7 @@
 package MergeTwoSortedLists;
 
+import Common.ListNode;
+
 class Solution {
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode dummy = new ListNode(0);

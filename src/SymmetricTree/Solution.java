@@ -1,5 +1,7 @@
 package SymmetricTree;
 
+import Common.TreeNode;
+
 class Solution {
     public boolean isSymmetric(TreeNode root) {
         return isSymmetricHelper(root, root);
