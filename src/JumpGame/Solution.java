@@ -2,20 +2,16 @@ package JumpGame;
 
 class Solution {
     public boolean canJump(int[] nums) {
-        int maxCanReach = 0;
-
-        for (int i = 0; i < nums.length; i++) {
-            if (i > maxCanReach) {
-                return false;
-            }
-
-            maxCanReach = Math.max(maxCanReach, nums[i] + i);
-
-            if (maxCanReach >= nums.length - 1) {
-                return true;
-            }
+        if (nums.length < 2) {
+            return true;
         }
-
-        return true;
+        
+        int max = nums[0];
+        int length = nums.length;
+        for (int i = 1; i < length && i <= max && max < length - 1; i++) {
+            max = Math.max(max, i + nums[i]);
+        }
+        
+        return max >= length - 1;
     }
 }
