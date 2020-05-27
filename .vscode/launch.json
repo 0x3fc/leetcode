@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Solution",
+            "request": "launch",
+            "mainClass": "MinimumTimeRequiredToRotAllOranges.Solution",
+            "projectName": "leetcode_30409db7"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Solution",
+            "request": "launch",
+            "mainClass": "FindSmallestDifference.Solution",
+            "projectName": "leetcode_30409db7"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Solution",
+            "request": "launch",
+            "mainClass": "MinCostClimbingStairs.Solution"
+        }
+    ]
+}
