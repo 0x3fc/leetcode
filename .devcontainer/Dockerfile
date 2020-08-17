@@ -1,49 +1,46 @@
-#-------------------------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
-#-------------------------------------------------------------------------------------------------------------
+# Update the VARIANT arg in devcontainer.json to pick a Java version >= 11
+ARG VARIANT=11
+FROM openjdk:${VARIANT}-jdk-buster
 
-FROM openjdk:8-jdk
+# Options for setup script
+ARG INSTALL_ZSH="true"
+ARG UPGRADE_PACKAGES="false"
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
 
-# Configure apt
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update \
-    && apt-get -y install --no-install-recommends apt-utils 2>&1
+# Install needed packages and setup non-root user. Use a separate RUN statement to add your own dependencies.
+COPY library-scripts/*.sh /tmp/library-scripts/
+RUN /bin/bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" \
+    && if [ ! -d "/docker-java-home" ]; then ln -s "${JAVA_HOME}" /docker-java-home; fi \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/common-debian.sh
 
-# Verify git, needed tools installed
-RUN apt-get -y install git procps curl lsb-release
+# [Optional] Install Maven
+ARG INSTALL_MAVEN="false"
+ARG MAVEN_VERSION=3.6.3
+ARG MAVEN_DOWNLOAD_SHA="no-check"
+ENV MAVEN_HOME=/usr/local/share/maven
+RUN if [ "${INSTALL_MAVEN}" = "true" ]; then /bin/bash /tmp/library-scripts/maven-debian.sh ${MAVEN_VERSION} ${MAVEN_HOME} ${USERNAME} ${MAVEN_DOWNLOAD_SHA}; fi \
+    && rm -f /tmp/library-scripts/maven-debian.sh
 
-#-------------------Uncomment the following steps to install Maven CLI Tools----------------------------------
-# ARG MAVEN_VERSION=3.6.1
-# ARG MAVEN_SHA=b4880fb7a3d81edd190a029440cdf17f308621af68475a4fe976296e71ff4a4b546dd6d8a58aaafba334d309cc11e638c52808a4b0e818fc0fd544226d952544
-# RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
-#   && curl -fsSL -o /tmp/apache-maven.tar.gz https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
-#   && echo "${MAVEN_SHA} /tmp/apache-maven.tar.gz" | sha512sum -c - \
-#   && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
-#   && rm -f /tmp/apache-maven.tar.gz \
-#   && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
-# COPY maven-settings.xml /usr/share/maven/ref/
-# ENV MAVEN_HOME /usr/share/maven
-# ENV MAVEN_CONFIG /root/.m2
-#-------------------------------------------------------------------------------------------------------------
+# [Optional] Install Gradle
+ARG INSTALL_GRADLE="false"
+ARG GRADLE_VERSION=5.4.1
+ARG GRADLE_DOWNLOAD_SHA="no-check"
+ENV GRADLE_HOME=/usr/local/share/gradle
+RUN if [ "${INSTALL_GRADLE}" = "true" ]; then /bin/bash /tmp/library-scripts/gradle-debian.sh ${GRADLE_VERSION} ${GRADLE_HOME} ${USERNAME} ${GRADLE_DOWNLOAD_SHA}; fi \
+    && rm -f /tmp/library-scripts/gradle-debian.sh
 
-#-------------------Uncomment the following steps to install Gradle CLI Tools---------------------------------
-# ENV GRADLE_HOME /opt/gradle
-# ENV GRADLE_VERSION 5.4.1
-# ARG GRADLE_DOWNLOAD_SHA256=7bdbad1e4f54f13c8a78abc00c26d44dd8709d4aedb704d913fb1bb78ac025dc
-# RUN curl -sSL --output gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
-#     && echo "${GRADLE_DOWNLOAD_SHA256} *gradle.zip" | sha256sum --check - \
-#     && unzip gradle.zip \
-#     && rm gradle.zip \
-#     && mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" \
-#     && ln -s "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle
-#-------------------------------------------------------------------------------------------------------------
+# [Optional] Install Node.js for use with web applications - update the INSTALL_NODE arg in devcontainer.json to enable.
+ARG INSTALL_NODE="false"
+ARG NODE_VERSION="lts/*"
+ENV NVM_DIR=/usr/local/share/nvm
+ENV NVM_SYMLINK_CURRENT=true \
+    PATH=${NVM_DIR}/current/bin:${PATH}
+COPY library-scripts/node-debian.sh /tmp/library-scripts/
+RUN if [ "$INSTALL_NODE" = "true" ]; then /bin/bash /tmp/library-scripts/node-debian.sh "${NVM_DIR}" "${NODE_VERSION}" "${USERNAME}"; fi \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/node-debian.sh
 
-# Clean up
-RUN apt-get autoremove -y \
-    && apt-get clean -y \
-    && rm -rf /var/lib/apt/lists/*
-ENV DEBIAN_FRONTEND=dialog
-
-# Allow for a consistant java home location for settings - image is changing over time
-RUN if [ ! -d "/docker-java-home" ]; then ln -s "${JAVA_HOME}" /docker-java-home; fi
+# [Optional] Uncomment this section to install additional OS packages.
+# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+#     && apt-get -y install --no-install-recommends <your-package-list-here>
