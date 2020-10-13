@@ -169,4 +169,40 @@ class Solution {
         helper(pre, pre.next, dummy.next);
         helper(index, index.next, last);
     }
+
+    public ListNode sortListQuickSort(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+
+        ListNode leftHead = new ListNode(), left = leftHead;
+        ListNode rightHead = new ListNode(), right = rightHead;
+
+        ListNode pivot = head;
+        ListNode iter = pivot.next;
+
+        // Partition
+        while (iter != null) {
+            if (iter.val < pivot.val) {
+                left.next = iter;
+                left = left.next;
+            } else {
+                right.next = iter;
+                right = right.next;
+            }
+            ListNode tmp = iter;
+            iter = iter.next;
+            tmp.next = null;
+        }
+
+        // Merge sorted parts
+        leftHead.next = sortList(leftHead.next);
+        ListNode end = leftHead;
+        while (end.next != null)
+            end = end.next;
+
+        end.next = pivot;
+        pivot.next = sortList(rightHead.next);
+
+        return leftHead.next;
+    }
 }
